@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bom Dia Interativo</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f39c12;
+            --background-color: #f5f6fa;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: entradaTitulo 1s ease-out;
+        }
+
+        .caixa {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            width: 300px;
+            min-height: 150px;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transform-origin: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .caixa:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .caixa span {
+            color: white;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .legenda {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            max-width: 400px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: entradaLegenda 1s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        .info-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            cursor: help;
+        }
+
+        @keyframes entradaTitulo {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes entradaLegenda {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modo-noturno {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            background-color: var(--text-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modo-noturno:hover {
+            transform: scale(1.05);
+            background-color: var(--primary-color);
+        }
+
+        /* Modo Noturno */
+        body.dark-mode {
+            --background-color: #2c3e50;
+            --text-color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bom Dia!</h1>
+
+        <div class="caixa" id="caixa-interativa">
+            <div class="info-icon" title="Clique na caixa para um efeito surpresa!">i</div>
+            <span>Caixa Interativa</span>
+        </div>
+
+        <div class="legenda">
+            <p><strong>Sobre esta demonstração:</strong></p>
+            <p>Esta é uma caixa interativa com gradiente dinâmico. Passe o mouse por cima para ver o efeito de elevação e clique para uma surpresa!</p>
+        </div>
+    </div>
+
+    <button class="modo-noturno" onclick="toggleDarkMode()">Alternar Modo Noturno</button>
+
+    <script>
+        // Função para alternar o modo noturno
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // Adiciona interatividade à caixa
+        const caixa = document.getElementById('caixa-interativa');
+        let angulo = 0;
+
+        caixa.addEventListener('click', function() {
+            this.style.transform = `scale(1.05) rotate(${angulo}deg)`;
+            angulo += 360;
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 1000);
+        });
+
+        // Atualiza a saudação baseada no horário
+        function atualizarSaudacao() {
+            const hora = new Date().getHours();
+            const titulo = document.querySelector('h1');
+            
+            if (hora >= 5 && hora < 12) {
+                titulo.textContent = "Bom Dia!";
+            } else if (hora >= 12 && hora < 18) {
+                titulo.textContent = "Boa Tarde!";
+            } else {
+                titulo.textContent = "Boa Noite!";
+            }
+        }
+
+        // Atualiza a saudação inicialmente e a cada minuto
+        atualizarSaudacao();
+        setInterval(atualizarSaudacao, 60000);
+    </script>
+</body>
+</html>
