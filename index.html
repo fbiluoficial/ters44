@@ -3,191 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bom Dia Interativo</title>
+    <title>Experiência Interativa</title>
     <style>
         :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #f39c12;
-            --background-color: #f5f6fa;
-            --text-color: #2c3e50;
+            --hue: 220;
+            --primary: hsl(var(--hue), 80%, 50%);
+            --accent: hsl(calc(var(--hue) + 180), 80%, 50%);
+            --bg: hsl(var(--hue), 10%, 95%);
+            --text: hsl(var(--hue), 80%, 20%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--background-color);
-            color: var(--text-color);
-            transition: background-color 0.3s;
+            background: var(--bg);
+            font-family: 'Segoe UI', sans-serif;
+            color: var(--text);
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
         }
 
         .container {
-            max-width: 800px;
-            padding: 20px;
-            text-align: center;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
         }
 
         h1 {
-            font-size: 3.5em;
-            margin-bottom: 30px;
-            color: var(--primary-color);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            animation: entradaTitulo 1s ease-out;
+            font-size: 4em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 2rem;
+            transform-style: preserve-3d;
+            animation: flutuacao 4s ease-in-out infinite;
         }
 
-        .caixa {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        .cartao {
             width: 300px;
-            min-height: 150px;
-            border-radius: 15px;
-            padding: 25px;
-            margin: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            transform-origin: center;
-            transition: all 0.3s ease;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             cursor: pointer;
-            position: relative;
         }
 
-        .caixa:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        .cartao:hover {
+            transform: translateZ(20px) rotateX(10deg) rotateY(10deg);
         }
 
-        .caixa span {
-            color: white;
-            font-size: 1.2em;
-            font-weight: 500;
-        }
-
-        .legenda {
-            background-color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            max-width: 400px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: entradaLegenda 1s ease-out forwards;
-            animation-delay: 0.5s;
-        }
-
-        .info-icon {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
+        .cartao-conteudo {
+            height: 100%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 2rem;
             color: white;
-            font-size: 14px;
-            cursor: help;
+            background: linear-gradient(135deg, 
+                hsla(var(--hue), 80%, 50%, 0.8),
+                hsla(calc(var(--hue) + 60), 80%, 50%, 0.8));
+            transition: all 0.3s;
         }
 
-        @keyframes entradaTitulo {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .cartao-icone {
+            font-size: 4em;
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
         }
 
-        @keyframes entradaLegenda {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .cartao:hover .cartao-icone {
+            transform: scale(1.2) rotate(360deg);
         }
 
-        .modo-noturno {
+        .controles {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            border-radius: 20px;
-            background-color: var(--text-color);
-            color: white;
+            bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 2;
+        }
+
+        .botao {
+            padding: 0.8rem 1.5rem;
             border: none;
+            border-radius: 50px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .modo-noturno:hover {
-            transform: scale(1.05);
-            background-color: var(--primary-color);
+        .botao:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
-        /* Modo Noturno */
-        body.dark-mode {
-            --background-color: #2c3e50;
-            --text-color: #ecf0f1;
+        @keyframes flutuacao {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .mensagem {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateX(200%);
+            transition: transform 0.3s;
+        }
+
+        .mensagem.visivel {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .cartao {
+                width: 250px;
+                height: 250px;
+            }
         }
     </style>
 </head>
 <body>
+    <div id="particles"></div>
+    
     <div class="container">
-        <h1>Bom Dia!</h1>
-
-        <div class="caixa" id="caixa-interativa">
-            <div class="info-icon" title="Clique na caixa para um efeito surpresa!">i</div>
-            <span>Caixa Interativa</span>
-        </div>
-
-        <div class="legenda">
-            <p><strong>Sobre esta demonstração:</strong></p>
-            <p>Esta é uma caixa interativa com gradiente dinâmico. Passe o mouse por cima para ver o efeito de elevação e clique para uma surpresa!</p>
+        <h1>Experiência Interativa</h1>
+        
+        <div class="cartao" id="cartao-principal">
+            <div class="cartao-conteudo">
+                <div class="cartao-icone">✨</div>
+                <span>Interaja Comigo!</span>
+            </div>
         </div>
     </div>
 
-    <button class="modo-noturno" onclick="toggleDarkMode()">Alternar Modo Noturno</button>
+    <div class="controles">
+        <button class="botao" onclick="mudarTema()">Mudar Tema</button>
+        <button class="botao" onclick="adicionarParticulas()">Efeito Especial</button>
+    </div>
 
+    <div class="mensagem" id="mensagem">
+        Efeito Ativado!
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // Função para alternar o modo noturno
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-        }
-
-        // Adiciona interatividade à caixa
-        const caixa = document.getElementById('caixa-interativa');
-        let angulo = 0;
-
-        caixa.addEventListener('click', function() {
-            this.style.transform = `scale(1.05) rotate(${angulo}deg)`;
-            angulo += 360;
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 1000);
+        // Configuração inicial das partículas
+        particlesJS('particles', {
+            particles: {
+                number: { value: 80 },
+                color: { value: '#4a90e2' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5 },
+                size: { value: 3 },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: true,
+                    out_mode: 'out'
+                }
+            }
         });
 
-        // Atualiza a saudação baseada no horário
-        function atualizarSaudacao() {
-            const hora = new Date().getHours();
+        // Efeito 3D no cartão
+        const cartao = document.getElementById('cartao-principal');
+        cartao.addEventListener('mousemove', (e) => {
+            const rect = cartao.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = (y - centerY) / 10;
+            const rotateY = -(x - centerX) / 10;
+            
+            cartao.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(50px)`;
+        });
+
+        cartao.addEventListener('mouseleave', () => {
+            cartao.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+        });
+
+        // Mudança de tema
+        function mudarTema() {
+            const hue = Math.random() * 360;
+            document.documentElement.style.setProperty('--hue', hue);
+        }
+
+        // Efeito de partículas especial
+        function adicionarParticulas() {
+            const particles = document.querySelector('#particles');
+            particles.style.opacity = '0';
+            
+            setTimeout(() => {
+                particlesJS('particles', {
+                    particles: {
+                        number: { value: 150 },
+                        color: { value: ['#ff0000', '#00ff00', '#0000ff'] },
+                        shape: { type: ['circle', 'triangle', 'star'] },
+                        opacity: { value: 0.8 },
+                        size: { value: 5 },
+                        move: {
+                            enable: true,
+                            speed: 6,
+                            direction: 'none',
+                            random: true,
+                            out_mode: 'bounce'
+                        }
+                    }
+                });
+                particles.style.opacity = '1';
+                
+                const mensagem = document.getElementById('mensagem');
+                mensagem.classList.add('visivel');
+                setTimeout(() => mensagem.classList.remove('visivel'), 2000);
+            }, 100);
+        }
+
+        // Efeito de clique no cartão
+        cartao.addEventListener('click', () => {
+            cartao.style.transform = 'scale(0.9) rotate(360deg)';
+            setTimeout(() => {
+                cartao.style.transform = 'scale(1) rotate(0deg)';
+            }, 500);
+        });
+
+        // Atualização dinâmica do horário
+        function atualizarHorario() {
+            const agora = new Date();
+            const hora = agora.getHours();
             const titulo = document.querySelector('h1');
             
             if (hora >= 5 && hora < 12) {
-                titulo.textContent = "Bom Dia!";
+                titulo.textContent = "Bom Dia Interativo!";
             } else if (hora >= 12 && hora < 18) {
-                titulo.textContent = "Boa Tarde!";
+                titulo.textContent = "Boa Tarde Interativa!";
             } else {
-                titulo.textContent = "Boa Noite!";
+                titulo.textContent = "Boa Noite Interativa!";
             }
         }
 
-        // Atualiza a saudação inicialmente e a cada minuto
-        atualizarSaudacao();
-        setInterval(atualizarSaudacao, 60000);
+        atualizarHorario();
+        setInterval(atualizarHorario, 60000);
     </script>
 </body>
 </html>
